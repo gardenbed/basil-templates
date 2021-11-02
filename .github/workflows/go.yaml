@@ -1,0 +1,73 @@
+name: Go
+on:
+  push:
+    paths:
+      - 'go/**'
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: Lint go/grpc-service-horizontal
+        uses: gardenbed/actions/go-lint@main
+        with:
+          path: ./go/grpc-service-horizontal
+      - name: Lint go/grpc-service-vertical
+        uses: gardenbed/actions/go-lint@main
+        with:
+          path: ./go/grpc-service-vertical
+      - name: Lint go/http-service-horizontal
+        uses: gardenbed/actions/go-lint@main
+        with:
+          path: ./go/http-service-horizontal
+      - name: Lint go/http-service-vertical
+        uses: gardenbed/actions/go-lint@main
+        with:
+          path: ./go/http-service-vertical
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Test go/grpc-service-horizontal
+        uses: gardenbed/actions/go-cover@main
+        with:
+          path: ./go/grpc-service-horizontal
+      - name: Test go/grpc-service-vertical
+        uses: gardenbed/actions/go-cover@main
+        with:
+          path: ./go/grpc-service-vertical
+      - name: Test go/http-service-horizontal
+        uses: gardenbed/actions/go-cover@main
+        with:
+          path: ./go/http-service-horizontal
+      - name: Test go/http-service-vertical
+        uses: gardenbed/actions/go-cover@main
+        with:
+          path: ./go/http-service-vertical
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Build go/grpc-service-horizontal
+        uses: gardenbed/actions/basil-build@main
+        with:
+          path: ./go/grpc-service-horizontal
+      - name: Build go/grpc-service-vertical
+        uses: gardenbed/actions/basil-build@main
+        with:
+          path: ./go/grpc-service-vertical
+      - name: Build go/http-service-horizontal
+        uses: gardenbed/actions/basil-build@main
+        with:
+          path: ./go/http-service-horizontal
+      - name: Build go/http-service-vertical
+        uses: gardenbed/actions/basil-build@main
+        with:
+          path: ./go/http-service-vertical
