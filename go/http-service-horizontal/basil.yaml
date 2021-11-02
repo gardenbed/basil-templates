@@ -1,0 +1,11 @@
+version: "1.0"
+
+project:
+  owner: team-id
+  language: go
+  profile: http-service-horizontal
+  build:
+    decorate: true
+    cross_compile: false
+  release:
+    mode: direct
