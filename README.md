@@ -1,3 +1,5 @@
+[![Build Status][workflow-image]][workflow-url]
+
 # Basil Templates 🌿
 
 This repository includes code templates for miscellaneous programming languages and technologies.
@@ -130,3 +132,7 @@ It also provides standard libraries for logging, metrics, tracing, authenticatio
   - **Misc**
     - [Using submodules in Git](https://www.vogella.com/tutorials/GitSubmodules/article.html)
     - [GitHub Actions](https://docs.github.com/en/actions)
+
+
+[workflow-url]: https://github.com/gardenbed/basil-templates/actions
+[workflow-image]: https://github.com/gardenbed/basil-templates/workflows/Go/badge.svg
