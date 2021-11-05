@@ -20,7 +20,7 @@ service GreetingService {
 }
 
 message GreetRequest {
-  string name = 1;
+  string github_username = 1;
 }
 
 message GreetResponse {

@@ -45,6 +45,8 @@ func TestNewService(t *testing.T) {
 }
 
 func TestService_Greet(t *testing.T) {
+	req, _ := http.NewRequest("GET", "https://api.github.com/users/octocat", nil)
+
 	tests := []struct {
 		name             string
 		httpClient       *MockHTTPClient
@@ -58,15 +60,15 @@ func TestService_Greet(t *testing.T) {
 			name: "Success_FromCache",
 			redisClient: &MockRedisClient{
 				GetMocks: []GetMock{
-					{OutStringCmd: redis.NewStringResult("Bonjour", nil)},
+					{OutStringCmd: redis.NewStringResult("Octocat", nil)},
 				},
 			},
 			ctx: context.Background(),
 			request: &greetingpb.GreetRequest{
-				Name: "Jane",
+				GithubUsername: "octocat",
 			},
 			expectedResponse: &greetingpb.GreetResponse{
-				Greeting: "Bonjour, Jane!",
+				Greeting: "Hello, Octocat!",
 			},
 			expectedError: "",
 		},
@@ -84,10 +86,37 @@ func TestService_Greet(t *testing.T) {
 			},
 			ctx: context.Background(),
 			request: &greetingpb.GreetRequest{
-				Name: "Jane",
+				GithubUsername: "octocat",
 			},
 			expectedResponse: nil,
 			expectedError:    "http error",
+		},
+		{
+			name: "InvalidResponseStatusCode",
+			httpClient: &MockHTTPClient{
+				DoMocks: []DoMock{
+					{
+						OutResponse: &http.Response{
+							Request:    req,
+							StatusCode: 400,
+							Body: io.NopCloser(
+								strings.NewReader(`{ "error": "invalid request" }`),
+							),
+						},
+					},
+				},
+			},
+			redisClient: &MockRedisClient{
+				GetMocks: []GetMock{
+					{OutStringCmd: redis.NewStringResult("", errors.New("redis error"))},
+				},
+			},
+			ctx: context.Background(),
+			request: &greetingpb.GreetRequest{
+				GithubUsername: "octocat",
+			},
+			expectedResponse: nil,
+			expectedError:    "GET /users/octocat 400: invalid request",
 		},
 		{
 			name: "InvalidResponseBody",
@@ -95,6 +124,7 @@ func TestService_Greet(t *testing.T) {
 				DoMocks: []DoMock{
 					{
 						OutResponse: &http.Response{
+							Request:    req,
 							StatusCode: 200,
 							Body: io.NopCloser(
 								strings.NewReader(`{`),
@@ -110,7 +140,7 @@ func TestService_Greet(t *testing.T) {
 			},
 			ctx: context.Background(),
 			request: &greetingpb.GreetRequest{
-				Name: "Jane",
+				GithubUsername: "octocat",
 			},
 			expectedResponse: nil,
 			expectedError:    "unexpected EOF",
@@ -121,9 +151,10 @@ func TestService_Greet(t *testing.T) {
 				DoMocks: []DoMock{
 					{
 						OutResponse: &http.Response{
+							Request:    req,
 							StatusCode: 200,
 							Body: io.NopCloser(
-								strings.NewReader(`{ "translatedText": "Bonjour" }`),
+								strings.NewReader(`{ "id": 1, "login": "octocat", "email": "octocat@example.com", "name": "Octocat" }`),
 							),
 						},
 					},
@@ -139,41 +170,10 @@ func TestService_Greet(t *testing.T) {
 			},
 			ctx: context.Background(),
 			request: &greetingpb.GreetRequest{
-				Name: "Jane",
+				GithubUsername: "octocat",
 			},
 			expectedResponse: &greetingpb.GreetResponse{
-				Greeting: "Bonjour, Jane!",
-			},
-			expectedError: "",
-		},
-		{
-			name: "Success_NoTranlsation",
-			httpClient: &MockHTTPClient{
-				DoMocks: []DoMock{
-					{
-						OutResponse: &http.Response{
-							StatusCode: 200,
-							Body: io.NopCloser(
-								strings.NewReader(`{}`),
-							),
-						},
-					},
-				},
-			},
-			redisClient: &MockRedisClient{
-				GetMocks: []GetMock{
-					{OutStringCmd: redis.NewStringResult("", errors.New("redis error"))},
-				},
-				SetMocks: []SetMock{
-					{OutStatusCmd: redis.NewStatusResult("", nil)},
-				},
-			},
-			ctx: context.Background(),
-			request: &greetingpb.GreetRequest{
-				Name: "Jane",
-			},
-			expectedResponse: &greetingpb.GreetResponse{
-				Greeting: "Hello, Jane!",
+				Greeting: "Hello, Octocat!",
 			},
 			expectedError: "",
 		},
