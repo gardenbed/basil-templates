@@ -64,7 +64,7 @@ func TestGreetingHandler_Greet(t *testing.T) {
 			},
 			ctx: context.Background(),
 			request: &greetingpb.GreetRequest{
-				Name: "Jane",
+				GithubUsername: "octocat",
 			},
 			expectedResponse: nil,
 			expectedError:    "controller error",
@@ -78,7 +78,7 @@ func TestGreetingHandler_Greet(t *testing.T) {
 			},
 			ctx: context.Background(),
 			request: &greetingpb.GreetRequest{
-				Name: "Jane",
+				GithubUsername: "octocat",
 			},
 			expectedResponse: nil,
 			expectedError:    "greet response cannot be nil",
@@ -89,17 +89,17 @@ func TestGreetingHandler_Greet(t *testing.T) {
 				GreetMocks: []GreetMock{
 					{
 						OutResponse: &entity.GreetResponse{
-							Greeting: "Hello, Jane!",
+							Greeting: "Hello, Octocat!",
 						},
 					},
 				},
 			},
 			ctx: context.Background(),
 			request: &greetingpb.GreetRequest{
-				Name: "Jane",
+				GithubUsername: "octocat",
 			},
 			expectedResponse: &greetingpb.GreetResponse{
-				Greeting: "Hello, Jane!",
+				Greeting: "Hello, Octocat!",
 			},
 			expectedError: "",
 		},

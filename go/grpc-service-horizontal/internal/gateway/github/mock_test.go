@@ -1,4 +1,4 @@
-package translate
+package github
 
 import "net/http"
 

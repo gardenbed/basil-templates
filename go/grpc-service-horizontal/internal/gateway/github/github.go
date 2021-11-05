@@ -1,21 +1,24 @@
-package translate
+package github
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/gardenbed/basil/graceful"
 	"github.com/gardenbed/basil/health"
+	"github.com/gardenbed/basil/httpx"
+
+	githubentity "grpc-service-horizontal/internal/entity/github"
 )
 
-// Gateway is the interface for calling an external translation service.
+// Gateway is the interface for calling an external service.
 type Gateway interface {
 	graceful.Client
 	health.Checker
-	Translate(ctx context.Context, lang, text string) (string, error)
+	GetUser(ctx context.Context, username string) (*githubentity.User, error)
 }
 
 type httpClient interface {
@@ -41,7 +44,7 @@ func NewGateway() (Gateway, error) {
 
 // String returns a name for the gateway.
 func (g *gateway) String() string {
-	return "translate-gateway"
+	return "github-gateway"
 }
 
 // Connect opens a long-lived connection to the external service.
@@ -59,39 +62,29 @@ func (g *gateway) HealthCheck(ctx context.Context) error {
 	return nil
 }
 
-// Translate calls an external API to translate a text into another language.
-func (g *gateway) Translate(ctx context.Context, lang, text string) (string, error) {
-	reqBody := struct {
-		Query  string `json:"q"`
-		Source string `json:"source"`
-		Target string `json:"target"`
-		Format string `json:"format"`
-	}{
-		Query:  text,
-		Source: "en",
-		Target: lang,
-		Format: "text",
-	}
+// GetUser retrieves a GitHub user by username.
+func (g *gateway) GetUser(ctx context.Context, username string) (*githubentity.User, error) {
+	url := fmt.Sprintf("https://api.github.com/users/%s", username)
+	req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
 
-	buf := new(bytes.Buffer)
-	_ = json.NewEncoder(buf).Encode(reqBody)
-
-	req, _ := http.NewRequestWithContext(ctx, "POST", "https://libretranslate.com/translate", buf)
+	req.Header.Set("User-Agent", "command-app")
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/vnd.github.v3+json")
 
 	resp, err := g.client.Do(req)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
-	respBody := struct {
-		Text string `json:"translatedText"`
-	}{}
-
-	if err := json.NewDecoder(resp.Body).Decode(&respBody); err != nil {
-		return "", err
+	if resp.StatusCode != http.StatusOK {
+		return nil, httpx.NewClientError(resp)
 	}
 
-	return respBody.Text, nil
+	user := new(githubentity.User)
+	if err := json.NewDecoder(resp.Body).Decode(user); err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

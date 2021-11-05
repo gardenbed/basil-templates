@@ -15,9 +15,9 @@ func TestGreetRequest(t *testing.T) {
 		{
 			name: "OK",
 			entity: GreetRequest{
-				Name: "Jane",
+				GithubUsername: "octocat",
 			},
-			expectedString: "GreetRequest{name=Jane}",
+			expectedString: "GreetRequest{github_username=octocat}",
 		},
 	}
 

@@ -27,7 +27,7 @@ Supported features:
 
 | Endpoint | Description |
 |----------|-------------|
-| `GreetingService::Greet` | Creates and returns a greeting for a given name. |
+| `GreetingService::Greet` | Creates and returns a greeting for a GitHub user! |
 
 ## Development
 

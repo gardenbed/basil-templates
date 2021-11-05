@@ -1,6 +1,10 @@
 package greeting
 
-import "context"
+import (
+	"context"
+
+	githubentity "grpc-service-horizontal/internal/entity/github"
+)
 
 type (
 	ConnectMock struct {
@@ -66,54 +70,52 @@ func (m *MockChecker) HealthCheck(ctx context.Context) error {
 }
 
 type (
-	TranslateMock struct {
+	GetUserMock struct {
 		InContext  context.Context
-		InLanguage string
-		InText     string
-		OutString  string
+		InUsername string
+		OutUser    *githubentity.User
 		OutError   error
 	}
 
-	MockTranslateGateway struct {
+	MockGithubGateway struct {
 		MockClient
 		MockChecker
 
 		StringOut string
 
-		TranslateIndex int
-		TranslateMocks []TranslateMock
+		GetUserIndex int
+		GetUserMocks []GetUserMock
 	}
 )
 
-func (m *MockTranslateGateway) String() string {
+func (m *MockGithubGateway) String() string {
 	return m.StringOut
 }
 
-func (m *MockTranslateGateway) Translate(ctx context.Context, lang, text string) (string, error) {
-	i := m.TranslateIndex
-	m.TranslateIndex++
-	m.TranslateMocks[i].InContext = ctx
-	m.TranslateMocks[i].InLanguage = lang
-	m.TranslateMocks[i].InText = text
-	return m.TranslateMocks[i].OutString, m.TranslateMocks[i].OutError
+func (m *MockGithubGateway) GetUser(ctx context.Context, username string) (*githubentity.User, error) {
+	i := m.GetUserIndex
+	m.GetUserIndex++
+	m.GetUserMocks[i].InContext = ctx
+	m.GetUserMocks[i].InUsername = username
+	return m.GetUserMocks[i].OutUser, m.GetUserMocks[i].OutError
 }
 
 type (
 	StoreMock struct {
 		InContext  context.Context
-		InLanguage string
-		InGreeting string
+		InUsername string
+		InName     string
 		OutError   error
 	}
 
 	LookupMock struct {
-		InContext   context.Context
-		InLanguage  string
-		OutGreeting string
-		OutError    error
+		InContext  context.Context
+		InUsername string
+		OutName    string
+		OutError   error
 	}
 
-	MockGreetingCacheRepository struct {
+	MockUserCacheRepository struct {
 		MockClient
 		MockChecker
 
@@ -127,23 +129,23 @@ type (
 	}
 )
 
-func (m *MockGreetingCacheRepository) String() string {
+func (m *MockUserCacheRepository) String() string {
 	return m.StringOut
 }
 
-func (m *MockGreetingCacheRepository) Store(ctx context.Context, lang, greeting string) error {
+func (m *MockUserCacheRepository) Store(ctx context.Context, username, name string) error {
 	i := m.StoreIndex
 	m.StoreIndex++
 	m.StoreMocks[i].InContext = ctx
-	m.StoreMocks[i].InLanguage = lang
-	m.StoreMocks[i].InGreeting = greeting
+	m.StoreMocks[i].InUsername = username
+	m.StoreMocks[i].InName = name
 	return m.StoreMocks[i].OutError
 }
 
-func (m *MockGreetingCacheRepository) Lookup(ctx context.Context, lang string) (string, error) {
+func (m *MockUserCacheRepository) Lookup(ctx context.Context, username string) (string, error) {
 	i := m.LookupIndex
 	m.LookupIndex++
 	m.LookupMocks[i].InContext = ctx
-	m.LookupMocks[i].InLanguage = lang
-	return m.LookupMocks[i].OutGreeting, m.LookupMocks[i].OutError
+	m.LookupMocks[i].InUsername = username
+	return m.LookupMocks[i].OutName, m.LookupMocks[i].OutError
 }
