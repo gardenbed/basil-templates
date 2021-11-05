@@ -1,0 +1,18 @@
+version: "1.0"
+
+project:
+  owner: my-team
+  language: go
+  profile: command-line-app
+  build:
+    cross_compile: true
+    platforms:
+      - linux-386
+      - linux-amd64
+      - linux-arm
+      - linux-arm64
+      - darwin-amd64
+      - windows-386
+      - windows-amd64
+  release:
+    mode: indirect

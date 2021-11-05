@@ -1,0 +1,17 @@
+# Compiled files
+/main
+/command-line-app
+/command-line-app
+
+# Build directories
+/bin/**
+/build/**
+
+# Test files
+*.log
+*.out
+*.test
+
+# Misc
+*.html
+/.brew_home/
