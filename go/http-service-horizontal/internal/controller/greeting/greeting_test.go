@@ -8,26 +8,27 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"http-service-horizontal/internal/entity"
+	githubentity "http-service-horizontal/internal/entity/github"
 )
 
 func TestNewController(t *testing.T) {
 	tests := []struct {
-		name                    string
-		translateGateway        *MockTranslateGateway
-		greetingcacheRepository *MockGreetingCacheRepository
-		expectedError           string
+		name                string
+		githubGateway       *MockGithubGateway
+		usercacheRepository *MockUserCacheRepository
+		expectedError       string
 	}{
 		{
-			name:                    "OK",
-			translateGateway:        &MockTranslateGateway{},
-			greetingcacheRepository: &MockGreetingCacheRepository{},
-			expectedError:           "",
+			name:                "OK",
+			githubGateway:       &MockGithubGateway{},
+			usercacheRepository: &MockUserCacheRepository{},
+			expectedError:       "",
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			c, err := NewController(tc.translateGateway, tc.greetingcacheRepository)
+			c, err := NewController(tc.githubGateway, tc.usercacheRepository)
 
 			if tc.expectedError == "" {
 				assert.NotNil(t, c)
@@ -42,57 +43,64 @@ func TestNewController(t *testing.T) {
 
 func TestController_Greet(t *testing.T) {
 	tests := []struct {
-		name                    string
-		translateGateway        *MockTranslateGateway
-		greetingcacheRepository *MockGreetingCacheRepository
-		ctx                     context.Context
-		request                 *entity.GreetRequest
-		expectedResponse        *entity.GreetResponse
-		expectedError           string
+		name                string
+		githubGateway       *MockGithubGateway
+		usercacheRepository *MockUserCacheRepository
+		ctx                 context.Context
+		request             *entity.GreetRequest
+		expectedResponse    *entity.GreetResponse
+		expectedError       string
 	}{
 		{
 			name: "Success_FromCache",
-			greetingcacheRepository: &MockGreetingCacheRepository{
+			usercacheRepository: &MockUserCacheRepository{
 				LookupMocks: []LookupMock{
-					{OutGreeting: "Bonjour"},
+					{OutName: "Octocat"},
 				},
 			},
 			ctx: context.Background(),
 			request: &entity.GreetRequest{
-				Name: "Jane",
+				GithubUsername: "octocat",
 			},
 			expectedResponse: &entity.GreetResponse{
-				Greeting: "Bonjour, Jane!",
+				Greeting: "Hello, Octocat!",
 			},
 			expectedError: "",
 		},
 		{
-			name: "TranslateFails",
-			translateGateway: &MockTranslateGateway{
-				TranslateMocks: []TranslateMock{
-					{OutError: errors.New("translation error")},
+			name: "GetUserFails",
+			githubGateway: &MockGithubGateway{
+				GetUserMocks: []GetUserMock{
+					{OutError: errors.New("github error")},
 				},
 			},
-			greetingcacheRepository: &MockGreetingCacheRepository{
+			usercacheRepository: &MockUserCacheRepository{
 				LookupMocks: []LookupMock{
 					{OutError: errors.New("not found")},
 				},
 			},
 			ctx: context.Background(),
 			request: &entity.GreetRequest{
-				Name: "Jane",
+				GithubUsername: "octocat",
 			},
 			expectedResponse: nil,
-			expectedError:    "translation error",
+			expectedError:    "github error",
 		},
 		{
 			name: "Success_FromAPI",
-			translateGateway: &MockTranslateGateway{
-				TranslateMocks: []TranslateMock{
-					{OutString: "Bonjour"},
+			githubGateway: &MockGithubGateway{
+				GetUserMocks: []GetUserMock{
+					{
+						OutUser: &githubentity.User{
+							ID:    1,
+							Login: "octocat",
+							Email: "octocat@example.com",
+							Name:  "Octocat",
+						},
+					},
 				},
 			},
-			greetingcacheRepository: &MockGreetingCacheRepository{
+			usercacheRepository: &MockUserCacheRepository{
 				LookupMocks: []LookupMock{
 					{OutError: errors.New("not found")},
 				},
@@ -102,34 +110,10 @@ func TestController_Greet(t *testing.T) {
 			},
 			ctx: context.Background(),
 			request: &entity.GreetRequest{
-				Name: "Jane",
+				GithubUsername: "octocat",
 			},
 			expectedResponse: &entity.GreetResponse{
-				Greeting: "Bonjour, Jane!",
-			},
-			expectedError: "",
-		},
-		{
-			name: "Success_NoTranlsation",
-			translateGateway: &MockTranslateGateway{
-				TranslateMocks: []TranslateMock{
-					{OutString: ""},
-				},
-			},
-			greetingcacheRepository: &MockGreetingCacheRepository{
-				LookupMocks: []LookupMock{
-					{OutError: errors.New("not found")},
-				},
-				StoreMocks: []StoreMock{
-					{OutError: nil},
-				},
-			},
-			ctx: context.Background(),
-			request: &entity.GreetRequest{
-				Name: "Jane",
-			},
-			expectedResponse: &entity.GreetResponse{
-				Greeting: "Hello, Jane!",
+				Greeting: "Hello, Octocat!",
 			},
 			expectedError: "",
 		},
@@ -138,8 +122,8 @@ func TestController_Greet(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			c := &controller{
-				translateGateway:        tc.translateGateway,
-				greetingcacheRepository: tc.greetingcacheRepository,
+				githubGateway:       tc.githubGateway,
+				usercacheRepository: tc.usercacheRepository,
 			}
 
 			response, err := c.Greet(tc.ctx, tc.request)

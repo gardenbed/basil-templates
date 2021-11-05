@@ -16,7 +16,7 @@ paths:
       tags:
         - greeting
       summary: Greets a name.
-      description: Creates and returns a greeting for a given name.
+      description: Creates and returns a greeting for a GitHub user.
       requestBody:
         required: true
         content:
@@ -24,9 +24,9 @@ paths:
             schema:
               type: object
               required:
-                - name
+                - githubUsername
               properties:
-                name:
+                githubUsername:
                   type: string
       responses:
         '200':

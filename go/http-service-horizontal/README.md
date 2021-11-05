@@ -27,7 +27,7 @@ Supported features:
 
 | Endpoint | Description |
 |----------|-------------|
-| `POST /v1/greet` | Creates and returns a greeting for a given name. |
+| `POST /v1/greet` | Creates and returns a greeting for a GitHub user! |
 
 ## Development
 

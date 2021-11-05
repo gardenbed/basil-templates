@@ -13,7 +13,7 @@ import (
 
 // GreetRequest is the HTTP (wire/transport protocol) model for a Greet request.
 type GreetRequest struct {
-	Name string `json:"name"`
+	GithubUsername string `json:"githubUsername"`
 }
 
 // GreetResponse is the HTTP (wire/transport protocol) model for a Greet response.

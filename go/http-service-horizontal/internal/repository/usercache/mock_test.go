@@ -1,4 +1,4 @@
-package greetingcache
+package usercache
 
 import (
 	"context"
