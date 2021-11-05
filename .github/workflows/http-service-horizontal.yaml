@@ -1,0 +1,37 @@
+name: http-service-horizontal
+on:
+  push:
+    paths:
+      - 'go/http-service-horizontal/**'
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: Lint http-service-horizontal
+        uses: gardenbed/actions/go-lint@main
+        with:
+          path: ./go/http-service-horizontal
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Test http-service-horizontal
+        uses: gardenbed/actions/go-cover@main
+        with:
+          path: ./go/http-service-horizontal
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Build http-service-horizontal
+        uses: gardenbed/actions/basil-build@main
+        with:
+          path: ./go/http-service-horizontal

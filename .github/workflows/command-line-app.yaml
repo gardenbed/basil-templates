@@ -1,0 +1,37 @@
+name: command-line-app
+on:
+  push:
+    paths:
+      - 'go/command-line-app/**'
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: Lint command-line-app
+        uses: gardenbed/actions/go-lint@main
+        with:
+          path: ./go/command-line-app
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Test command-line-app
+        uses: gardenbed/actions/go-cover@main
+        with:
+          path: ./go/command-line-app
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Build command-line-app
+        uses: gardenbed/actions/basil-build@main
+        with:
+          path: ./go/command-line-app
