@@ -12,9 +12,9 @@ import (
 	grpctelemetry "github.com/gardenbed/basil/telemetry/grpc"
 
 	"grpc-service-horizontal/internal/controller/greeting"
-	"grpc-service-horizontal/internal/gateway/translate"
+	"grpc-service-horizontal/internal/gateway/github"
 	"grpc-service-horizontal/internal/handler"
-	"grpc-service-horizontal/internal/repository/greetingcache"
+	"grpc-service-horizontal/internal/repository/usercache"
 	"grpc-service-horizontal/internal/server"
 	"grpc-service-horizontal/metadata"
 )
@@ -78,23 +78,23 @@ func main() {
 
 	// CREATE GATEWAYS
 
-	translateGateway, err := translate.NewGateway()
+	githubGateway, err := github.NewGateway()
 	if err != nil {
-		probe.Logger().Error("failed to create translate gateway", "error", err)
+		probe.Logger().Error("failed to create github gateway", "error", err)
 		panic(err)
 	}
 
 	// CREATE REPOSITORIES
 
-	greetingcacheRepository, err := greetingcache.NewRepository(configs.RedisAddress)
+	usercacheRepository, err := usercache.NewRepository(configs.RedisAddress)
 	if err != nil {
-		probe.Logger().Error("failed to create greeting cache repository", "error", err)
+		probe.Logger().Error("failed to create user cache repository", "error", err)
 		panic(err)
 	}
 
 	// CREATE CONTROLLERS
 
-	greetingController, err := greeting.NewController(translateGateway, greetingcacheRepository)
+	greetingController, err := greeting.NewController(githubGateway, usercacheRepository)
 	if err != nil {
 		probe.Logger().Error("failed to create greeting controller", "error", err)
 		panic(err)
@@ -122,7 +122,7 @@ func main() {
 
 	// Create an HTTP health handler for health checking the service by external systems
 	health.SetLogger(probe.Logger())
-	health.RegisterChecker(translateGateway, greetingcacheRepository)
+	health.RegisterChecker(githubGateway, usercacheRepository)
 	healthHandler := health.HandlerFunc()
 
 	httpServer, err := server.NewHTTP(healthHandler, server.HTTPOptions{
@@ -138,7 +138,7 @@ func main() {
 	// Gracefully, retry the lost connections
 	// Gracefully, disconnect the clients and shutdown the servers on termination signals
 	graceful.SetLogger(probe.Logger())
-	graceful.RegisterClient(translateGateway, greetingcacheRepository)
+	graceful.RegisterClient(githubGateway, usercacheRepository)
 	graceful.RegisterServer(grpcServer, httpServer)
 	code := graceful.StartAndWait()
 

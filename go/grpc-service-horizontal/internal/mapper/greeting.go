@@ -13,12 +13,12 @@ func GreetRequestIDLToDomain(req *greetingpb.GreetRequest) (*entity.GreetRequest
 		return nil, errors.New("greet request cannot be nil")
 	}
 
-	if req.Name == "" {
-		return nil, errors.New("name cannot be empty")
+	if req.GithubUsername == "" {
+		return nil, errors.New("github username cannot be empty")
 	}
 
 	return &entity.GreetRequest{
-		Name: req.Name,
+		GithubUsername: req.GithubUsername,
 	}, nil
 }
 

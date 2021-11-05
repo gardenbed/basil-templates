@@ -6,6 +6,7 @@ include ../monorepo/make/docker.mk  # docker, docker-test, push, push-latest, sa
 
 # Variables required by inclusions
 name := grpc-service-vertical
+main_pkg := .
 proto_path := idl
 go_out_path := internal/idl
 docker_image := dockerid/grpc-service-vertical

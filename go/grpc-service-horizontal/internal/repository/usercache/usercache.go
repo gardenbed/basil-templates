@@ -1,4 +1,4 @@
-package greetingcache
+package usercache
 
 import (
 	"context"
@@ -14,8 +14,8 @@ import (
 type Repository interface {
 	graceful.Client
 	health.Checker
-	Store(ctx context.Context, lang, greeting string) error
-	Lookup(ctx context.Context, lang string) (string, error)
+	Store(ctx context.Context, username, name string) error
+	Lookup(ctx context.Context, username string) (string, error)
 }
 
 type redisClient interface {
@@ -45,7 +45,7 @@ func NewRepository(redisAddress string) (Repository, error) {
 
 // String returns a name for the repository.
 func (r *repository) String() string {
-	return "greetingcache-repository"
+	return "usercache-repository"
 }
 
 // Connect opens a long-lived connection to the repository backend.
@@ -64,24 +64,24 @@ func (r *repository) HealthCheck(ctx context.Context) error {
 	return r.client.Ping(ctx).Err()
 }
 
-// Store
-func (r *repository) Store(ctx context.Context, lang, greeting string) error {
-	if lang == "" {
-		return errors.New("no language code")
+// Store saves a key-value pair in cache.
+func (r *repository) Store(ctx context.Context, username, name string) error {
+	if username == "" {
+		return errors.New("no username")
 	}
 
-	if greeting == "" {
-		return errors.New("no greeting value")
+	if name == "" {
+		return errors.New("no name")
 	}
 
-	return r.client.Set(ctx, lang, greeting, 0).Err()
+	return r.client.Set(ctx, username, name, 0).Err()
 }
 
-// Lookup
-func (r *repository) Lookup(ctx context.Context, lang string) (string, error) {
-	if lang == "" {
-		return "", errors.New("no language code")
+// Lookup loads a key-value from cache.
+func (r *repository) Lookup(ctx context.Context, username string) (string, error) {
+	if username == "" {
+		return "", errors.New("no username")
 	}
 
-	return r.client.Get(ctx, lang).Result()
+	return r.client.Get(ctx, username).Result()
 }

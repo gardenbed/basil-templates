@@ -1,4 +1,4 @@
-package translate
+package github
 
 import (
 	"context"
@@ -9,6 +9,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	githubentity "grpc-service-horizontal/internal/entity/github"
 )
 
 func TestNewGateway(t *testing.T) {
@@ -39,7 +41,7 @@ func TestNewGateway(t *testing.T) {
 
 func TestGateway_String(t *testing.T) {
 	g := new(gateway)
-	assert.Equal(t, "translate-gateway", g.String())
+	assert.Equal(t, "github-gateway", g.String())
 }
 
 func TestGateway_Connect(t *testing.T) {
@@ -136,14 +138,15 @@ func TestGateway_HealthCheck(t *testing.T) {
 	}
 }
 
-func TestGateway_Translate(t *testing.T) {
+func TestGateway_GetUser(t *testing.T) {
+	req, _ := http.NewRequest("GET", "https://api.github.com/users/octocat", nil)
+
 	tests := []struct {
 		name          string
 		client        *MockHTTPClient
 		ctx           context.Context
-		lang          string
-		text          string
-		expectedText  string
+		username      string
+		expectedUser  *githubentity.User
 		expectedError string
 	}{
 		{
@@ -154,10 +157,27 @@ func TestGateway_Translate(t *testing.T) {
 				},
 			},
 			ctx:           context.Background(),
-			lang:          "fr",
-			text:          "Hello",
-			expectedText:  "",
+			username:      "octocat",
 			expectedError: "http error",
+		},
+		{
+			name: "UnexpectedStatusCode",
+			client: &MockHTTPClient{
+				DoMocks: []DoMock{
+					{
+						OutResponse: &http.Response{
+							Request:    req,
+							StatusCode: 400,
+							Body: io.NopCloser(
+								strings.NewReader(`{ "error": "invalid request" }`),
+							),
+						},
+					},
+				},
+			},
+			ctx:           context.Background(),
+			username:      "octocat",
+			expectedError: "GET /users/octocat 400: invalid request",
 		},
 		{
 			name: "InvalidResponseBody",
@@ -165,6 +185,7 @@ func TestGateway_Translate(t *testing.T) {
 				DoMocks: []DoMock{
 					{
 						OutResponse: &http.Response{
+							Request:    req,
 							StatusCode: 200,
 							Body: io.NopCloser(
 								strings.NewReader(`{`),
@@ -174,9 +195,7 @@ func TestGateway_Translate(t *testing.T) {
 				},
 			},
 			ctx:           context.Background(),
-			lang:          "fr",
-			text:          "Hello",
-			expectedText:  "",
+			username:      "octocat",
 			expectedError: "unexpected EOF",
 		},
 		{
@@ -185,19 +204,23 @@ func TestGateway_Translate(t *testing.T) {
 				DoMocks: []DoMock{
 					{
 						OutResponse: &http.Response{
+							Request:    req,
 							StatusCode: 200,
 							Body: io.NopCloser(
-								strings.NewReader(`{ "translatedText": "Bonjour" }`),
+								strings.NewReader(`{ "id": 1, "login": "octocat", "email": "octocat@example.com", "name": "Octocat" }`),
 							),
 						},
 					},
 				},
 			},
-			ctx:           context.Background(),
-			lang:          "fr",
-			text:          "Hello",
-			expectedText:  "Bonjour",
-			expectedError: "",
+			ctx:      context.Background(),
+			username: "octocat",
+			expectedUser: &githubentity.User{
+				ID:    1,
+				Login: "octocat",
+				Email: "octocat@example.com",
+				Name:  "Octocat",
+			},
 		},
 	}
 
@@ -207,13 +230,13 @@ func TestGateway_Translate(t *testing.T) {
 				client: tc.client,
 			}
 
-			text, err := g.Translate(tc.ctx, tc.lang, tc.text)
+			user, err := g.GetUser(tc.ctx, tc.username)
 
 			if tc.expectedError == "" {
 				assert.NoError(t, err)
-				assert.Equal(t, tc.expectedText, text)
+				assert.Equal(t, tc.expectedUser, user)
 			} else {
-				assert.Empty(t, text)
+				assert.Empty(t, user)
 				assert.EqualError(t, err, tc.expectedError)
 			}
 		})

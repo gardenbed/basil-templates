@@ -24,18 +24,18 @@ func TestGreetRequestIDLToDomain(t *testing.T) {
 			expectedError: errors.New("greet request cannot be nil"),
 		},
 		{
-			name:          "EmptyName",
+			name:          "EmptyGithubUsername",
 			req:           &idl.GreetRequest{},
 			expectedReq:   nil,
-			expectedError: errors.New("name cannot be empty"),
+			expectedError: errors.New("github username cannot be empty"),
 		},
 		{
 			name: "OK",
 			req: &idl.GreetRequest{
-				Name: "Jane",
+				GithubUsername: "octocat",
 			},
 			expectedReq: &entity.GreetRequest{
-				Name: "Jane",
+				GithubUsername: "octocat",
 			},
 			expectedError: nil,
 		},

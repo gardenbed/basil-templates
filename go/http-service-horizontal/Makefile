@@ -5,5 +5,6 @@ include ../monorepo/make/docker.mk  # docker, docker-test, push, push-latest, sa
 
 # Variables required by inclusions
 name := http-service-horizontal
+main_pkg := .
 docker_image := dockerid/http-service-horizontal
 docker_tag ?= $(version)

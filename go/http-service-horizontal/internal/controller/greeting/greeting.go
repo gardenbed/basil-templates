@@ -5,11 +5,9 @@ import (
 	"fmt"
 
 	"http-service-horizontal/internal/entity"
-	"http-service-horizontal/internal/gateway/translate"
-	"http-service-horizontal/internal/repository/greetingcache"
+	"http-service-horizontal/internal/gateway/github"
+	"http-service-horizontal/internal/repository/usercache"
 )
-
-const lang = "fr"
 
 // Controller is the interface for greeting business logic.
 type Controller interface {
@@ -18,26 +16,26 @@ type Controller interface {
 
 // controller implements the Controller interface.
 type controller struct {
-	translateGateway        translate.Gateway
-	greetingcacheRepository greetingcache.Repository
+	githubGateway       github.Gateway
+	usercacheRepository usercache.Repository
 }
 
 // NewController creates a new controller.
-func NewController(translateGateway translate.Gateway, greetingcacheRepository greetingcache.Repository) (Controller, error) {
+func NewController(githubGateway github.Gateway, usercacheRepository usercache.Repository) (Controller, error) {
 	return &controller{
-		translateGateway:        translateGateway,
-		greetingcacheRepository: greetingcacheRepository,
+		githubGateway:       githubGateway,
+		usercacheRepository: usercacheRepository,
 	}, nil
 }
 
-// Greet creates and returns a greeting for a given name!
+// Greet creates a greeting for a given GitHub user!
 func (c *controller) Greet(ctx context.Context, req *entity.GreetRequest) (*entity.GreetResponse, error) {
-	greeting, err := c.getGreeting(ctx)
+	name, err := c.getName(ctx, req.GithubUsername)
 	if err != nil {
 		return nil, err
 	}
 
-	greeting = fmt.Sprintf("%s, %s!", greeting, req.Name)
+	greeting := fmt.Sprintf("Hello, %s!", name)
 	resp := &entity.GreetResponse{
 		Greeting: greeting,
 	}
@@ -45,21 +43,18 @@ func (c *controller) Greet(ctx context.Context, req *entity.GreetRequest) (*enti
 	return resp, nil
 }
 
-func (c *controller) getGreeting(ctx context.Context) (string, error) {
-	greeting, err := c.greetingcacheRepository.Lookup(ctx, lang)
-	if err == nil && greeting != "" {
-		return greeting, nil
+func (c *controller) getName(ctx context.Context, username string) (string, error) {
+	name, err := c.usercacheRepository.Lookup(ctx, username)
+	if err == nil && name != "" {
+		return name, nil
 	}
 
-	greeting, err = c.translateGateway.Translate(ctx, lang, "Hello")
+	user, err := c.githubGateway.GetUser(ctx, username)
 	if err != nil {
 		return "", err
 	}
 
-	if greeting != "" {
-		_ = c.greetingcacheRepository.Store(ctx, lang, "Hello")
-		return greeting, nil
-	}
+	_ = c.usercacheRepository.Store(ctx, username, user.Name)
 
-	return "Hello", nil
+	return user.Name, nil
 }

@@ -1,4 +1,4 @@
-package greetingcache
+package usercache
 
 import (
 	"context"
@@ -39,7 +39,7 @@ func TestNewRepository(t *testing.T) {
 
 func TestRepository_String(t *testing.T) {
 	r := new(repository)
-	assert.Equal(t, "greetingcache-repository", r.String())
+	assert.Equal(t, "usercache-repository", r.String())
 }
 
 func TestRepository_Connect(t *testing.T) {
@@ -179,62 +179,62 @@ func TestRepository_HealthCheck(t *testing.T) {
 
 func TestRepository_Store(t *testing.T) {
 	tests := []struct {
-		name          string
+		testname      string
 		client        *MockRedisClient
 		ctx           context.Context
-		lang          string
-		greeting      string
+		username      string
+		name          string
 		expectedError string
 	}{
 		{
-			name:          "NoLanguage",
+			testname:      "NoUsername",
 			client:        &MockRedisClient{},
 			ctx:           context.Background(),
-			lang:          "",
-			greeting:      "",
-			expectedError: "no language code",
+			username:      "",
+			name:          "",
+			expectedError: "no username",
 		},
 		{
-			name:          "NoGreeting",
+			testname:      "NoName",
 			client:        &MockRedisClient{},
 			ctx:           context.Background(),
-			lang:          "fr",
-			greeting:      "",
-			expectedError: "no greeting value",
+			username:      "octocat",
+			name:          "",
+			expectedError: "no name",
 		},
 		{
-			name: "SetFails",
+			testname: "SetFails",
 			client: &MockRedisClient{
 				SetMocks: []SetMock{
 					{OutStatusCmd: redis.NewStatusResult("", errors.New("redis error"))},
 				},
 			},
 			ctx:           context.Background(),
-			lang:          "fr",
-			greeting:      "Hello, World!",
+			username:      "octocat",
+			name:          "Octocat",
 			expectedError: "redis error",
 		},
 		{
-			name: "Success",
+			testname: "Success",
 			client: &MockRedisClient{
 				SetMocks: []SetMock{
 					{OutStatusCmd: redis.NewStatusResult("", nil)},
 				},
 			},
 			ctx:           context.Background(),
-			lang:          "fr",
-			greeting:      "Hello, World!",
+			username:      "octocat",
+			name:          "Octocat",
 			expectedError: "",
 		},
 	}
 
 	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
+		t.Run(tc.testname, func(t *testing.T) {
 			r := &repository{
 				client: tc.client,
 			}
 
-			err := r.Store(tc.ctx, tc.lang, tc.greeting)
+			err := r.Store(tc.ctx, tc.username, tc.name)
 
 			if tc.expectedError == "" {
 				assert.NoError(t, err)
@@ -247,60 +247,60 @@ func TestRepository_Store(t *testing.T) {
 
 func TestRepository_Lookup(t *testing.T) {
 	tests := []struct {
-		name             string
-		client           *MockRedisClient
-		ctx              context.Context
-		lang             string
-		expectedGreeting string
-		expectedError    string
+		testname      string
+		client        *MockRedisClient
+		ctx           context.Context
+		username      string
+		expectedName  string
+		expectedError string
 	}{
 		{
-			name:             "NoLanguage",
-			client:           &MockRedisClient{},
-			ctx:              context.Background(),
-			lang:             "",
-			expectedGreeting: "",
-			expectedError:    "no language code",
+			testname:      "NoUsername",
+			client:        &MockRedisClient{},
+			ctx:           context.Background(),
+			username:      "",
+			expectedName:  "",
+			expectedError: "no username",
 		},
 		{
-			name: "GetFails",
+			testname: "GetFails",
 			client: &MockRedisClient{
 				GetMocks: []GetMock{
 					{OutStringCmd: redis.NewStringResult("", errors.New("redis error"))},
 				},
 			},
-			ctx:              context.Background(),
-			lang:             "fr",
-			expectedGreeting: "",
-			expectedError:    "redis error",
+			ctx:           context.Background(),
+			username:      "octocat",
+			expectedName:  "",
+			expectedError: "redis error",
 		},
 		{
-			name: "Success",
+			testname: "Success",
 			client: &MockRedisClient{
 				GetMocks: []GetMock{
-					{OutStringCmd: redis.NewStringResult("Bonjour", nil)},
+					{OutStringCmd: redis.NewStringResult("Octocat", nil)},
 				},
 			},
-			ctx:              context.Background(),
-			lang:             "fr",
-			expectedGreeting: "Bonjour",
-			expectedError:    "",
+			ctx:           context.Background(),
+			username:      "octocat",
+			expectedName:  "Octocat",
+			expectedError: "",
 		},
 	}
 
 	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
+		t.Run(tc.testname, func(t *testing.T) {
 			r := &repository{
 				client: tc.client,
 			}
 
-			greeting, err := r.Lookup(tc.ctx, tc.lang)
+			name, err := r.Lookup(tc.ctx, tc.username)
 
 			if tc.expectedError == "" {
 				assert.NoError(t, err)
-				assert.Equal(t, tc.expectedGreeting, greeting)
+				assert.Equal(t, tc.expectedName, name)
 			} else {
-				assert.Empty(t, greeting)
+				assert.Empty(t, name)
 				assert.EqualError(t, err, tc.expectedError)
 			}
 		})

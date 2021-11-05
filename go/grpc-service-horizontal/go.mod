@@ -3,7 +3,7 @@ module grpc-service-horizontal
 go 1.17
 
 require (
-	github.com/gardenbed/basil v0.1.0
+	github.com/gardenbed/basil v0.1.1
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/stretchr/testify v1.7.0
 	google.golang.org/grpc v1.42.0
