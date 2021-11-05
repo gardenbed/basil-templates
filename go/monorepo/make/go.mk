@@ -2,6 +2,7 @@
 ##
 ## The following variables need to be defined where this file is included:
 ##   - name
+##   - main_pkg
 ##
 ## The following files need to be included where this file is included:
 ##   - common.mk
@@ -11,11 +12,17 @@
 ## MACROS
 ##
 
-# Compiles a binary for a target platform
+# Compiles a binary for the host platform.
+define compile
+  go build -ldflags $(ldflags) -o $(build_dir)/$(name) $(main_pkg)
+	$(call echo_green,$(build_dir)/$(name));
+endef
+
+# Compiles a binary for a target platform.
 define cross_compile
 	GOOS=$(shell echo $(1) | cut -d '-' -f 1) \
 	GOARCH=$(shell echo $(1) | cut -d '-' -f 2) \
-	go build -ldflags $(ldflags) -o $(build_dir)/$(name)-$(1)
+	go build -ldflags $(ldflags) -o $(build_dir)/$(name)-$(1) $(main_pkg)
 	$(call echo_green,$(build_dir)/$(name)-$(1));
 endef
 
@@ -89,12 +96,10 @@ run:
 
 .PHONY: build
 build:
-	@ go build -ldflags $(ldflags) -o $(name)
-	@ $(call echo_green,$(name))
+	@ $(call compile)
 
 .PHONY: build-all
 build-all:
-	@ mkdir -p $(build_dir)
 	@ $(foreach platform, $(platforms), $(call cross_compile,$(platform)))
 
 .PHONY: clean-build

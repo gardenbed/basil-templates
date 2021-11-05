@@ -161,7 +161,7 @@ func TestGateway_GetUser(t *testing.T) {
 			expectedError: "http error",
 		},
 		{
-			name: "InvalidResponseStatusCode",
+			name: "UnexpectedStatusCode",
 			client: &MockHTTPClient{
 				DoMocks: []DoMock{
 					{
@@ -230,13 +230,13 @@ func TestGateway_GetUser(t *testing.T) {
 				client: tc.client,
 			}
 
-			text, err := g.GetUser(tc.ctx, tc.username)
+			user, err := g.GetUser(tc.ctx, tc.username)
 
 			if tc.expectedError == "" {
 				assert.NoError(t, err)
-				assert.Equal(t, tc.expectedUser, text)
+				assert.Equal(t, tc.expectedUser, user)
 			} else {
-				assert.Empty(t, text)
+				assert.Empty(t, user)
 				assert.EqualError(t, err, tc.expectedError)
 			}
 		})

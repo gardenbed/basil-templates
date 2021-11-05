@@ -121,7 +121,7 @@ func TestService_Greet(t *testing.T) {
 			expectedBody:       "http error\n",
 		},
 		{
-			name: "InvalidResponseStatusCode",
+			name: "UnexpectedStatusCode",
 			httpClient: &MockHTTPClient{
 				DoMocks: []DoMock{
 					{

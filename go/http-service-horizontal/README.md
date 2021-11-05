@@ -1,6 +1,6 @@
 # http-service-horizontal
 
-This is intended to be used as a template for scaffolding a new service.
+This is intended to be used as a template for generating a new service.
 
 This is an example of a service that the service domain is sliced **horizontally**.
 You can find a more in-depth discussion about different ways of slicing the service domain [here](../../README.md#slicing-your-domain).
