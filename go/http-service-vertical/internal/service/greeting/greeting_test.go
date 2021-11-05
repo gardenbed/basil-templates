@@ -73,6 +73,8 @@ func TestService_RegisterRoutes(t *testing.T) {
 }
 
 func TestService_Greet(t *testing.T) {
+	req, _ := http.NewRequest("GET", "https://api.github.com/users/octocat", nil)
+
 	tests := []struct {
 		name               string
 		httpClient         *MockHTTPClient
@@ -93,13 +95,13 @@ func TestService_Greet(t *testing.T) {
 			name: "Success_FromCache",
 			redisClient: &MockRedisClient{
 				GetMocks: []GetMock{
-					{OutStringCmd: redis.NewStringResult("Bonjour", nil)},
+					{OutStringCmd: redis.NewStringResult("Octocat", nil)},
 				},
 			},
 			ctx:                context.Background(),
-			r:                  httptest.NewRequest("POST", "/greet", strings.NewReader(`{ "name": "Jane" }`)),
+			r:                  httptest.NewRequest("POST", "/greet", strings.NewReader(`{ "githubUsername": "octocat" }`)),
 			expectedStatusCode: 200,
-			expectedBody:       "{\"greeting\":\"Bonjour, Jane!\"}\n",
+			expectedBody:       "{\"greeting\":\"Hello, Octocat!\"}\n",
 		},
 		{
 			name: "HTTPCallFails",
@@ -114,9 +116,34 @@ func TestService_Greet(t *testing.T) {
 				},
 			},
 			ctx:                context.Background(),
-			r:                  httptest.NewRequest("POST", "/greet", strings.NewReader(`{ "name": "Jane" }`)),
+			r:                  httptest.NewRequest("POST", "/greet", strings.NewReader(`{ "githubUsername": "octocat" }`)),
 			expectedStatusCode: 500,
 			expectedBody:       "http error\n",
+		},
+		{
+			name: "InvalidResponseStatusCode",
+			httpClient: &MockHTTPClient{
+				DoMocks: []DoMock{
+					{
+						OutResponse: &http.Response{
+							Request:    req,
+							StatusCode: 400,
+							Body: io.NopCloser(
+								strings.NewReader(`{ "error": "invalid request" }`),
+							),
+						},
+					},
+				},
+			},
+			redisClient: &MockRedisClient{
+				GetMocks: []GetMock{
+					{OutStringCmd: redis.NewStringResult("", errors.New("redis error"))},
+				},
+			},
+			ctx:                context.Background(),
+			r:                  httptest.NewRequest("POST", "/greet", strings.NewReader(`{ "githubUsername": "octocat" }`)),
+			expectedStatusCode: 500,
+			expectedBody:       "GET /users/octocat 400: invalid request\n",
 		},
 		{
 			name: "InvalidResponseBody",
@@ -124,6 +151,7 @@ func TestService_Greet(t *testing.T) {
 				DoMocks: []DoMock{
 					{
 						OutResponse: &http.Response{
+							Request:    req,
 							StatusCode: 200,
 							Body: io.NopCloser(
 								strings.NewReader(`{`),
@@ -138,7 +166,7 @@ func TestService_Greet(t *testing.T) {
 				},
 			},
 			ctx:                context.Background(),
-			r:                  httptest.NewRequest("POST", "/greet", strings.NewReader(`{ "name": "Jane" }`)),
+			r:                  httptest.NewRequest("POST", "/greet", strings.NewReader(`{ "githubUsername": "octocat" }`)),
 			expectedStatusCode: 500,
 			expectedBody:       "unexpected EOF\n",
 		},
@@ -148,9 +176,10 @@ func TestService_Greet(t *testing.T) {
 				DoMocks: []DoMock{
 					{
 						OutResponse: &http.Response{
+							Request:    req,
 							StatusCode: 200,
 							Body: io.NopCloser(
-								strings.NewReader(`{ "translatedText": "Bonjour" }`),
+								strings.NewReader(`{ "id": 1, "login": "octocat", "email": "octocat@example.com", "name": "Octocat" }`),
 							),
 						},
 					},
@@ -165,36 +194,9 @@ func TestService_Greet(t *testing.T) {
 				},
 			},
 			ctx:                context.Background(),
-			r:                  httptest.NewRequest("POST", "/greet", strings.NewReader(`{ "name": "Jane" }`)),
+			r:                  httptest.NewRequest("POST", "/greet", strings.NewReader(`{ "githubUsername": "octocat" }`)),
 			expectedStatusCode: 200,
-			expectedBody:       "{\"greeting\":\"Bonjour, Jane!\"}\n",
-		},
-		{
-			name: "Success_NoTranlsation",
-			httpClient: &MockHTTPClient{
-				DoMocks: []DoMock{
-					{
-						OutResponse: &http.Response{
-							StatusCode: 200,
-							Body: io.NopCloser(
-								strings.NewReader(`{}`),
-							),
-						},
-					},
-				},
-			},
-			redisClient: &MockRedisClient{
-				GetMocks: []GetMock{
-					{OutStringCmd: redis.NewStringResult("", errors.New("redis error"))},
-				},
-				SetMocks: []SetMock{
-					{OutStatusCmd: redis.NewStatusResult("", nil)},
-				},
-			},
-			ctx:                context.Background(),
-			r:                  httptest.NewRequest("POST", "/greet", strings.NewReader(`{ "name": "Jane" }`)),
-			expectedStatusCode: 200,
-			expectedBody:       "{\"greeting\":\"Hello, Jane!\"}\n",
+			expectedBody:       "{\"greeting\":\"Hello, Octocat!\"}\n",
 		},
 	}
 

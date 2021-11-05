@@ -1,7 +1,6 @@
 package greeting
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -12,8 +11,6 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/mux"
 )
-
-const lang = "fr"
 
 type (
 	httpClient interface {
@@ -54,7 +51,7 @@ func (s *Service) RegisterRoutes(router *mux.Router, middleware ...httpx.Middlew
 
 // GreetRequest is the HTTP (wire/transport protocol) model for a Greet request.
 type GreetRequest struct {
-	Name string `json:"name"`
+	GithubUsername string `json:"githubUsername"`
 }
 
 // GreetResponse is the HTTP (wire/transport protocol) model for a Greet response.
@@ -70,13 +67,13 @@ func (s *Service) Greet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	greeting, err := s.getGreeting(r.Context())
+	name, err := s.getName(r.Context(), req.GithubUsername)
 	if err != nil {
 		httpx.Error(w, err, http.StatusInternalServerError)
 		return
 	}
 
-	greeting = fmt.Sprintf("%s, %s!", greeting, req.Name)
+	greeting := fmt.Sprintf("Hello, %s!", name)
 	resp := &GreetResponse{
 		Greeting: greeting,
 	}
@@ -85,29 +82,18 @@ func (s *Service) Greet(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(resp)
 }
 
-func (s *Service) getGreeting(ctx context.Context) (string, error) {
-	greeting, err := s.redisClient.Get(ctx, lang).Result()
-	if err == nil && greeting != "" {
-		return greeting, nil
+func (s *Service) getName(ctx context.Context, username string) (string, error) {
+	name, err := s.redisClient.Get(ctx, username).Result()
+	if err == nil && name != "" {
+		return name, nil
 	}
 
-	reqBody := struct {
-		Query  string `json:"q"`
-		Source string `json:"source"`
-		Target string `json:"target"`
-		Format string `json:"format"`
-	}{
-		Query:  "Hello",
-		Source: "en",
-		Target: lang,
-		Format: "text",
-	}
+	url := fmt.Sprintf("https://api.github.com/users/%s", username)
+	req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
 
-	buf := new(bytes.Buffer)
-	_ = json.NewEncoder(buf).Encode(reqBody)
-
-	req, _ := http.NewRequestWithContext(ctx, "POST", "https://libretranslate.com/translate", buf)
+	req.Header.Set("User-Agent", "command-app")
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/vnd.github.v3+json")
 
 	resp, err := s.httpClient.Do(req)
 	if err != nil {
@@ -115,20 +101,17 @@ func (s *Service) getGreeting(ctx context.Context) (string, error) {
 	}
 	defer resp.Body.Close()
 
-	respBody := struct {
-		Text string `json:"translatedText"`
+	if resp.StatusCode != http.StatusOK {
+		return "", httpx.NewClientError(resp)
+	}
+
+	user := struct {
+		Name string `json:"name"`
 	}{}
 
-	if err := json.NewDecoder(resp.Body).Decode(&respBody); err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&user); err != nil {
 		return "", err
 	}
 
-	greeting = respBody.Text
-
-	if greeting != "" {
-		_ = s.redisClient.Set(ctx, lang, "Hello", 0).Err()
-		return greeting, nil
-	}
-
-	return "Hello", nil
+	return user.Name, nil
 }
