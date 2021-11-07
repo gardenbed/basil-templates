@@ -1,0 +1,37 @@
+name: grpc-service
+on:
+  push:
+    paths:
+      - 'go/grpc-service/**'
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: Lint grpc-service
+        uses: gardenbed/actions/go-lint@main
+        with:
+          path: ./go/grpc-service
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Test grpc-service
+        uses: gardenbed/actions/go-cover@main
+        with:
+          path: ./go/grpc-service
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Build grpc-service
+        uses: gardenbed/actions/basil-build@main
+        with:
+          path: ./go/grpc-service

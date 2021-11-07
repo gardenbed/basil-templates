@@ -1,0 +1,10 @@
+version: "1.0"
+
+project:
+  owner: team-id
+  language: go
+  profile: http-service
+  build:
+    cross_compile: false
+  release:
+    mode: indirect
