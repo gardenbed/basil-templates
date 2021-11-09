@@ -1,0 +1,12 @@
+name: monorepo
+description: This is a template for creating Go monorepos.
+
+changes:
+  deletes:
+    - glob: 'template.yaml'
+  moves:
+  appends:
+  replaces:
+    - filepath: '(README.md)$'
+      old: 'monorepo'
+      new: '{{.Name}}'

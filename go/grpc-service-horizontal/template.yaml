@@ -1,0 +1,18 @@
+name: grpc-service-horizontal
+description: This is a template for creating gRPC services in Go.
+
+changes:
+  deletes:
+    - glob: 'template.yaml'
+  moves:
+  appends:
+  replaces:
+    - filepath: '(\.md|go.mod|\.go|\.proto|\.gitignore|\.dockerignore|Dockerfile|Dockerfile\.test|docker-compose\.yml|Makefile)$'
+      old: 'grpc-service-horizontal'
+      new: '{{.Name}}'
+    - filepath: 'Makefile$'
+      old: 'dockerid'
+      new: '{{.DockerID}}'
+    - filepath: 'basil.yaml$'
+      old: 'team-id'
+      new: '{{.Owner}}'
