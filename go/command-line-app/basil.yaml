@@ -1,7 +1,7 @@
 version: "1.0"
 
 project:
-  owner: my-team
+  owner: team-id
   language: go
   profile: command-line-app
   build:

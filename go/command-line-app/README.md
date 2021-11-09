@@ -22,10 +22,3 @@ This is intended to be used as a template for generating a new command-line appl
 | `build` | Builds the application binary. |
 | `build-all` | Builds the application binary for all supported platforms. |
 | `clean-build` | Deletes built binaries. |
-| `docker` | Builds the Docker image. |
-| `docker-test` | Builds the test Docker image. |
-| `push` | Pushes the built Docker image to container registry. |
-| `push-latest` | Tags the built Docker image as latest and pushes it to container registry. |
-| `save-docker` | Saves the built Docker image to the disk. |
-| `load-docker` | Loads the Docker image from the disk. |
-| `clean-docker` | Deletes the saved Docker image from the disk. |
