@@ -11,9 +11,9 @@ import (
 
 func main() {
 	ui := createUI()
-	c := createCLI(ui)
+	app := createCLI(ui)
 
-	code, err := c.Run()
+	code, err := app.Run()
 	if err != nil {
 		ui.Error(err.Error())
 	}
