@@ -1,0 +1,26 @@
+name: library
+on:
+  push:
+    paths:
+      - 'go/library/**'
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: Lint library
+        uses: gardenbed/actions/go-lint@main
+        with:
+          path: ./go/library
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Test library
+        uses: gardenbed/actions/go-cover@main
+        with:
+          path: ./go/library
