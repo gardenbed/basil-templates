@@ -1,7 +1,6 @@
 # Compiled files
 /main
 /command-line-app
-/command-line-app
 
 # Build directories
 /bin/**
