@@ -10,7 +10,7 @@ changes:
   appends:
   replaces:
     - filepath: '(\.md|go.mod|\.go|\.gitignore|Makefile)$'
-      old: 'grpc-service'
+      old: 'command-line-app'
       new: '{{.Name}}'
     - filepath: 'basil.yaml$'
       old: 'team-id'

@@ -1,0 +1,8 @@
+version: "1.0"
+
+project:
+  owner: team-id
+  language: go
+  profile: library
+  release:
+    mode: indirect

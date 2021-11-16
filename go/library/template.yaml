@@ -1,0 +1,19 @@
+name: library
+description: This is a template for creating libraries in Go.
+
+changes:
+  deletes:
+    - glob: 'template.yaml'
+  moves:
+    - src: 'library.go'
+      dest: '{{.Name}}.go'
+    - src: 'library_test.go'
+      dest: '{{.Name}}_test.go'
+  appends:
+  replaces:
+    - filepath: '(\.md|go.mod|\.go)$'
+      old: 'library'
+      new: '{{.Name}}'
+    - filepath: 'basil.yaml$'
+      old: 'team-id'
+      new: '{{.Owner}}'
