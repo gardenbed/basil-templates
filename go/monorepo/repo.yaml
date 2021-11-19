@@ -1,0 +1,13 @@
+name: monorepo
+
+domains:
+  - name: auth
+    subdomains:
+      - name: auth
+  - name: core
+    subdomains:
+      - name: core
+
+teams:
+  - name: auth-platform
+  - name: core-platform
