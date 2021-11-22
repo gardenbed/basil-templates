@@ -1,3 +1,8 @@
+# Please files
+/plz-out
+/.plz-cache
+.plzconfig.local
+
 # Misc files
 .vscode
 .DS_Store

@@ -1,5 +1,22 @@
 # Make
 
+## Example
+
+```Makefile
+include make/common.mk
+include make/go.mk
+include make/grpc.mk
+include make/docker.mk
+include make/terraform.mk
+
+name := my-service                   # Required by go.mk
+main_pkg := .                        # Required by go.mk
+proto_path := idl                    # Required by grpc.mk
+go_out_path := internal/idl          # Required by grpc.mk
+docker_image := dockerid/my-service  # Required by docker.mk
+docker_tag := $(version)             # Required by docker.mk
+```
+
 ## Documentation
 
 | File | Required Variables | Macros | Rules |

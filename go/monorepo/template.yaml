@@ -7,6 +7,6 @@ changes:
   moves:
   appends:
   replaces:
-    - filepath: '(README.md)$'
+    - filepath: '(go.mod|\.go|\.proto|\.plzconfig|repo.yaml|README.md)$'
       old: 'monorepo'
       new: '{{.Name}}'
