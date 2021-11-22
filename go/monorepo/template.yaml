@@ -1,7 +1,7 @@
 name: monorepo
 description: This is a template for creating Go monorepos.
 
-changes:
+edits:
   deletes:
     - glob: 'template.yaml'
   moves:

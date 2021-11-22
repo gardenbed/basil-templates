@@ -1,7 +1,7 @@
 name: command-line-app
 description: This is a template for creating command-line applications in Go.
 
-changes:
+edits:
   deletes:
     - glob: 'template.yaml'
   moves:
