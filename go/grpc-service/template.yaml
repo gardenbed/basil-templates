@@ -1,7 +1,7 @@
 name: grpc-service
 description: This is a template for creating gRPC services in Go.
 
-changes:
+edits:
   deletes:
     - glob: 'template.yaml'
   moves:
@@ -10,9 +10,9 @@ changes:
     - filepath: '(\.md|go.mod|\.go|\.proto|\.gitignore|\.dockerignore|Dockerfile|Dockerfile\.test|docker-compose\.yml|Makefile)$'
       old: 'grpc-service'
       new: '{{.Name}}'
-    - filepath: 'Makefile$'
-      old: 'dockerid'
-      new: '{{.DockerID}}'
     - filepath: 'basil.yaml$'
       old: 'team-id'
       new: '{{.Owner}}'
+    - filepath: 'Makefile$'
+      old: 'dockerid'
+      new: '{{.DockerID}}'

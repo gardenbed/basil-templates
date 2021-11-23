@@ -1,7 +1,7 @@
 name: library
 description: This is a template for creating libraries in Go.
 
-changes:
+edits:
   deletes:
     - glob: 'template.yaml'
   moves:
