@@ -1,7 +1,6 @@
-
 # All targets in this package that do not specify otherwise will be visible to the entire repo.
 # This is useful for third-party packages that anyone can use them.
-package(default_visibility = ['PUBLIC'])
+package(default_visibility = ["PUBLIC"])
 
 go_module(
   name = "github.com_stretchr_testify",
