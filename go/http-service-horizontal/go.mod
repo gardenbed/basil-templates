@@ -1,6 +1,6 @@
 module http-service-horizontal
 
-go 1.17
+go 1.18
 
 require (
 	github.com/gardenbed/basil v0.1.1
