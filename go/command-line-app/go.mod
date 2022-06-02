@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/gardenbed/basil v0.1.1
-	github.com/mitchellh/cli v1.1.3
+	github.com/mitchellh/cli v1.1.4
 	github.com/stretchr/testify v1.7.1
 )
 
