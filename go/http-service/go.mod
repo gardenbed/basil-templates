@@ -1,6 +1,6 @@
 module http-service
 
-go 1.18
+go 1.19
 
 require (
 	github.com/gardenbed/basil v0.1.1
