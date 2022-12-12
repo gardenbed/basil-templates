@@ -6,7 +6,7 @@ volumes:
 services:
   # https://hub.docker.com/_/redis
   redis:
-    image: redis:7.0.5-alpine
+    image: redis:7.0.6-alpine
     hostname: redis
     container_name: redis
     restart: always
