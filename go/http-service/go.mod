@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/gardenbed/basil v0.1.2
-	github.com/go-redis/redis/v8 v8.11.5
+	github.com/go-redis/redis/v9 v9.0.2
 	github.com/gorilla/mux v1.8.0
 	github.com/stretchr/testify v1.8.1
 )
