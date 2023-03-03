@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 )
 
 // HTTP is a redis.Client that implements the graceful.Client and graceful.Client health.Checker interfaces.

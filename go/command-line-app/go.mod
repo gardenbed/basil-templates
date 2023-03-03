@@ -1,11 +1,11 @@
 module command-line-app
 
-go 1.19
+go 1.20
 
 require (
-	github.com/gardenbed/basil v0.1.2
+	github.com/gardenbed/basil v0.1.3
 	github.com/mitchellh/cli v1.1.5
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.2
 )
 
 require (
@@ -30,6 +30,6 @@ require (
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a // indirect
-	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
+	golang.org/x/sys v0.5.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

@@ -7,7 +7,7 @@ import (
 
 	"github.com/gardenbed/basil/graceful"
 	"github.com/gardenbed/basil/health"
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 )
 
 // Repository is the interface for interacting with the data store.
