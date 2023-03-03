@@ -30,6 +30,6 @@ jobs:
         with:
           fetch-depth: 0
       - name: Build grpc-service
-        uses: gardenbed/actions/basil-build@main
+        uses: ./.github/actions/basil-build
         with:
           path: ./go/grpc-service

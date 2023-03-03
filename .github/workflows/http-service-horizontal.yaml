@@ -30,6 +30,6 @@ jobs:
         with:
           fetch-depth: 0
       - name: Build http-service-horizontal
-        uses: gardenbed/actions/basil-build@main
+        uses: ./.github/actions/basil-build
         with:
           path: ./go/http-service-horizontal
