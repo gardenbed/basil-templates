@@ -1,0 +1,22 @@
+name: Basil Build
+description: GitHub action for building Go binaries using Basil CLI.
+inputs:
+  path:
+    description: The path to the Go project.
+    required: false
+    default: .
+  cross_compile:
+    description: Whether or not to build binaries for all platforms.
+    required: false
+  platforms:
+    description: A comma-separated list of platforms for cross compilation.
+    required: false
+outputs:
+  artifacts:
+    description: A space-separated list of built artifacts.
+runs:
+  using: docker
+  image: Dockerfile
+branding:
+  icon: box
+  color: blue

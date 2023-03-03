@@ -9,8 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - name: Lint grpc-service
         uses: gardenbed/actions/go-lint@main
         with:
@@ -32,6 +30,6 @@ jobs:
         with:
           fetch-depth: 0
       - name: Build grpc-service
-        uses: gardenbed/actions/basil-build@main
+        uses: ./.github/actions/basil-build
         with:
           path: ./go/grpc-service

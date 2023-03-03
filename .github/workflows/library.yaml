@@ -9,8 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
       - name: Lint library
         uses: gardenbed/actions/go-lint@main
         with:
