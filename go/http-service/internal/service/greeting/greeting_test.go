@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -211,7 +210,7 @@ func TestService_Greet(t *testing.T) {
 			s.Greet(rec, tc.r)
 
 			res := rec.Result()
-			b, err := ioutil.ReadAll(res.Body)
+			b, err := io.ReadAll(res.Body)
 			assert.NoError(t, err)
 			body := string(b)
 

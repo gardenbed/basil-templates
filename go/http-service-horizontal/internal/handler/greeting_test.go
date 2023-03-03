@@ -2,7 +2,7 @@ package handler
 
 import (
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -111,7 +111,7 @@ func TestGreetingHandler_Greet(t *testing.T) {
 			handler.Greet(rec, tc.req)
 
 			res := rec.Result()
-			b, err := ioutil.ReadAll(res.Body)
+			b, err := io.ReadAll(res.Body)
 			assert.NoError(t, err)
 			body := string(b)
 
