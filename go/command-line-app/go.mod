@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/gardenbed/basil v0.1.3
 	github.com/mitchellh/cli v1.1.5
-	github.com/stretchr/testify v1.8.3
+	github.com/stretchr/testify v1.8.4
 )
 
 require (
