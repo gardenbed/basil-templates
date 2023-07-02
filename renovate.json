@@ -1,9 +1,6 @@
 {
   "extends": [
-    "config:base"
-  ],
-  "postUpdateOptions": [
-    "gomodTidy"
+    "github>gardenbed/renovate:go"
   ],
   "packageRules": [
     {
