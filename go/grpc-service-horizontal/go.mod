@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/gardenbed/basil v0.1.3
-	github.com/redis/go-redis/v9 v9.2.1
+	github.com/redis/go-redis/v9 v9.3.0
 	github.com/stretchr/testify v1.8.4
 	google.golang.org/grpc v1.59.0
 	google.golang.org/protobuf v1.31.0
