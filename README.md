@@ -1,4 +1,10 @@
-[![Build Status][workflow-image]][workflow-url]
+[![Build Status][codeql-image]][codeql-url]
+[![Build Status][workflow-command-line-app-image]][workflow-command-line-app-url]
+[![Build Status][workflow-grpc-service-image]][workflow-grpc-service-url]
+[![Build Status][workflow-grpc-service-horizontal-image]][workflow-grpc-service-horizontal-url]
+[![Build Status][workflow-http-service-image]][workflow-http-service-url]
+[![Build Status][workflow-http-service-horizontal-image]][workflow-http-service-horizontal-url]
+[![Build Status][workflow-library-image]][workflow-library-url]
 
 # Basil Templates 🌿
 
@@ -134,5 +140,17 @@ It also provides standard libraries for logging, metrics, tracing, authenticatio
     - [GitHub Actions](https://docs.github.com/en/actions)
 
 
-[workflow-url]: https://github.com/gardenbed/basil-templates/actions
-[workflow-image]: https://github.com/gardenbed/basil-templates/workflows/Go/badge.svg
+[codeql-url]: https://github.com/gardenbed/basil-templates/actions/workflows/github-code-scanning/codeql
+[codeql-image]: https://github.com/gardenbed/basil-templates/workflows/CodeQL/badge.svg
+[workflow-command-line-app-url]: https://github.com/gardenbed/basil-templates/actions/workflows/command-line-app.yaml
+[workflow-command-line-app-image]: https://github.com/gardenbed/basil-templates/workflows/command-line-app/badge.svg
+[workflow-grpc-service-url]: https://github.com/gardenbed/basil-templates/actions/workflows/grpc-service.yaml
+[workflow-grpc-service-image]: https://github.com/gardenbed/basil-templates/workflows/grpc-service/badge.svg
+[workflow-grpc-service-horizontal-url]: https://github.com/gardenbed/basil-templates/actions/workflows/grpc-service-horizontal.yaml
+[workflow-grpc-service-horizontal-image]: https://github.com/gardenbed/basil-templates/workflows/grpc-service-horizontal/badge.svg
+[workflow-http-service-url]: https://github.com/gardenbed/basil-templates/actions/workflows/http-service.yaml
+[workflow-http-service-image]: https://github.com/gardenbed/basil-templates/workflows/http-service/badge.svg
+[workflow-http-service-horizontal-url]: https://github.com/gardenbed/basil-templates/actions/workflows/http-service-horizontal.yaml
+[workflow-http-service-horizontal-image]: https://github.com/gardenbed/basil-templates/workflows/http-service-horizontal/badge.svg
+[workflow-library-url]: https://github.com/gardenbed/basil-templates/actions/workflows/library.yaml
+[workflow-library-image]: https://github.com/gardenbed/basil-templates/workflows/library/badge.svg
