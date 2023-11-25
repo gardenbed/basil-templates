@@ -66,7 +66,7 @@ func main() {
 
 	if configs.OpenTelemetryCollector != "" {
 		probeOpts = append(probeOpts,
-			telemetry.WithOpenTelemetry(configs.OpenTelemetryCollector, nil),
+			telemetry.WithOpenTelemetry(true, true, configs.OpenTelemetryCollector, nil),
 		)
 	}
 
