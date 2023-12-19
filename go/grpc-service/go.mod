@@ -4,9 +4,9 @@ go 1.21
 
 require (
 	github.com/gardenbed/basil v0.2.0
-	github.com/redis/go-redis/v9 v9.3.0
+	github.com/redis/go-redis/v9 v9.3.1
 	github.com/stretchr/testify v1.8.4
-	google.golang.org/grpc v1.60.0
+	google.golang.org/grpc v1.60.1
 	google.golang.org/protobuf v1.31.0
 )
 
