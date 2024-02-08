@@ -1,5 +1,5 @@
 # TEST IMAGE
-FROM golang:1.21
+FROM golang:1.22
 WORKDIR /project
 COPY . .
 RUN go get ./...
