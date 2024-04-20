@@ -1,6 +1,6 @@
 module grpc-service
 
-go 1.21
+go 1.22.2
 
 require (
 	github.com/gardenbed/basil v0.2.0
