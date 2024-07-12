@@ -4,7 +4,7 @@ go 1.22.2
 
 require (
 	github.com/gardenbed/basil v0.2.0
-	github.com/redis/go-redis/v9 v9.5.3
+	github.com/redis/go-redis/v9 v9.5.4
 	github.com/stretchr/testify v1.9.0
 	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.34.2
