@@ -1,4 +1,4 @@
-[![Build Status][codeql-image]][codeql-url]
+[![CodeQL][codeql-image]][codeql-url]
 [![Build Status][workflow-command-line-app-image]][workflow-command-line-app-url]
 [![Build Status][workflow-grpc-service-image]][workflow-grpc-service-url]
 [![Build Status][workflow-grpc-service-horizontal-image]][workflow-grpc-service-horizontal-url]
