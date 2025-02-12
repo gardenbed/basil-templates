@@ -1,4 +1,4 @@
-FROM golang:1.23
+FROM golang:1.24
 
 # Install required tools
 RUN apt-get update && \
