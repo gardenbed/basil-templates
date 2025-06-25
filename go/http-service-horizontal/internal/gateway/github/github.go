@@ -75,7 +75,10 @@ func (g *gateway) GetUser(ctx context.Context, username string) (*githubentity.U
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, httpx.NewClientError(resp)

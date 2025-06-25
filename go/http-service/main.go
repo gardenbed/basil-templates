@@ -69,7 +69,10 @@ func main() {
 
 	probe := telemetry.NewProbe(probeOpts...)
 	telemetry.Set(probe)
-	defer probe.Close(ctx)
+
+	defer func() {
+		_ = probe.Close(ctx)
+	}()
 
 	telemetryMiddleware := httptelemetry.NewMiddleware(probe, httptelemetry.Options{})
 
