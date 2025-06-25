@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/gardenbed/basil/httpx"
-	"github.com/redis/go-redis/v9"
 	"github.com/gorilla/mux"
+	"github.com/redis/go-redis/v9"
 )
 
 type (
@@ -99,7 +99,10 @@ func (s *Service) getName(ctx context.Context, username string) (string, error) 
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return "", httpx.NewClientError(resp)

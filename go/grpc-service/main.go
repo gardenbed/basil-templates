@@ -70,7 +70,10 @@ func main() {
 
 	probe := telemetry.NewProbe(probeOpts...)
 	telemetry.Set(probe)
-	defer probe.Close(ctx)
+
+	defer func() {
+		_ = probe.Close(ctx)
+	}()
 
 	serverInterceptor := grpctelemetry.NewServerInterceptor(probe, grpctelemetry.Options{})
 
