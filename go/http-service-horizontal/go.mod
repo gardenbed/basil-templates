@@ -6,7 +6,7 @@ require (
 	github.com/gardenbed/basil v0.2.0
 	github.com/gorilla/mux v1.8.1
 	github.com/redis/go-redis/v9 v9.12.1
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.0
 )
 
 require (
