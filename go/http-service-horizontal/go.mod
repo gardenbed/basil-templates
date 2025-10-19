@@ -5,7 +5,7 @@ go 1.24.4
 require (
 	github.com/gardenbed/basil v0.2.0
 	github.com/gorilla/mux v1.8.1
-	github.com/redis/go-redis/v9 v9.14.0
+	github.com/redis/go-redis/v9 v9.14.1
 	github.com/stretchr/testify v1.11.1
 )
 
